@@ -1,6 +1,23 @@
 cmake_minimum_required(VERSION 3.6)
 project(bottledwater)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+find_package(PostgreSQL REQUIRED)
+include_directories(${PostgreSQL_INCLUDE_DIRS})
+
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
+
+find_package(KafkaC REQUIRED)
+include_directories(${KAFKAC_INCLUDE_DIRS})
+
+find_package(AvroC REQUIRED)
+include_directories(${AVROC_INCLUDE_DIRS})
+
+find_package(Jansson REQUIRED)
+include_directories(${JANSSON_INCLUDE_DIRS})
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(CLIENT_HEADER_FILES
@@ -52,11 +69,13 @@ set(KAFKA_SOURCE_FILES
         )
 
 add_executable(bottledwater
+        ${EXT_HEADER_FILES}
         ${CLIENT_HEADER_FILES}
         ${CLIENT_SOURCE_FILES}
         ${KAFKA_HEADER_FILES}
         ${KAFKA_SOURCE_FILES}
         )
+target_include_directories(bottledwater PUBLIC ./client ./ext)
 
 add_library(bottledwater-ext
         ${CLIENT_HEADER_FILES}
