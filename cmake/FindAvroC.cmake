@@ -32,63 +32,60 @@
 #  AVRO_LIBRARIES          The Avro C libraries
 #  AVRO_INCLUDE_DIRS       The location of Avro C headers
 
-message ("\nLooking for Avro C headers and libraries")
-
 if (AVRO_ROOT_DIR)
-    message (STATUS "Root dir: ${AVRO_ROOT_DIR}")
+    message(STATUS "Root dir: ${AVRO_ROOT_DIR}")
 endif ()
 
 find_package(PkgConfig)
 pkg_check_modules(PC_AVRO avro-c)
+message(STATUS "${PC_AVRO_CFLAGS}")
+message(STATUS "${PC_AVRO_LIBS}")
 set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
-		  
-find_path(AVRO_INCLUDE_DIR 
-    NAMES
-        Encoder.hh
-	HINTS 
-        ${AVRO_ROOT_DIR}/include 
-        ${PC_AVRO_INCLUDEDIR} 
-        ${PC_AVRO_INCLUDE_DIRS}
-	PATH_SUFFIXES 
-        avro
-)
 
-if (AVRO_LINK_STATIC) 
-    set (AVRO_LOOK_FOR_LIB_NAMES avroc_s avroc)
+find_path(AVRO_INCLUDE_DIR
+        NAMES
+        Encoder.hh
+        HINTS
+        ${AVRO_ROOT_DIR}/include
+        ${PC_AVRO_INCLUDEDIR}
+        ${PC_AVRO_INCLUDE_DIRS}
+        PATH_SUFFIXES
+        avro
+        )
+
+if (AVRO_LINK_STATIC)
+    set(AVRO_LOOK_FOR_LIB_NAMES avroc_s avroc)
 else ()
-    set (AVRO_LOOK_FOR_LIB_NAMES avroc)
+    set(AVRO_LOOK_FOR_LIB_NAMES avroc)
 endif ()
 
-find_library(AVRO_LIBRARY 
-	NAMES 
+find_library(AVRO_LIBRARY
+        NAMES
         ${AVRO_LOOK_FOR_LIB_NAMES}
-	PATHS 
-        ${AVRO_ROOT_DIR}/lib 
-        ${PC_AVRO_LIBDIR} 
-        ${PC_AVRO_LIBRARY_DIRS} 
-)
+        PATHS
+        ${AVRO_ROOT_DIR}/lib
+        ${PC_AVRO_LIBDIR}
+        ${PC_AVRO_LIBRARY_DIRS}
+        )
 
 include(FindPackageHandleStandardArgs)
 
 # handle the QUIETLY and REQUIRED arguments and set Avro_FOUND to TRUE
 # if all listed variables are TRUE
-find_package_handle_standard_args(Avro 
-	DEFAULT_MSG
-    AVRO_LIBRARY 
-	AVRO_INCLUDE_DIR
-)
+find_package_handle_standard_args(Avro
+        DEFAULT_MSG
+        AVRO_LIBRARY
+        AVRO_INCLUDE_DIR
+        )
 
 mark_as_advanced(AVRO_INCLUDE_DIR AVRO_LIBRARY)
 
 if (AVRO_FOUND)
     set(AVRO_LIBRARIES ${AVRO_LIBRARY})
     set(AVRO_INCLUDE_DIRS ${AVRO_INCLUDE_DIR})
-	
+
     get_filename_component(AVRO_LIBRARY_DIR ${AVRO_LIBRARY} PATH)
     get_filename_component(AVRO_LIBRARY_NAME ${AVRO_LIBRARY} NAME_WE)
-    
-    mark_as_advanced(AVRO_LIBRARY_DIR AVRO_LIBRARY_NAME)
 
-	message (STATUS "Include directories: ${AVRO_INCLUDE_DIRS}") 
-	message (STATUS "Libraries: ${AVRO_LIBRARIES}") 
+    mark_as_advanced(AVRO_LIBRARY_DIR AVRO_LIBRARY_NAME)
 endif ()

@@ -5,3 +5,4 @@
 /kafka/bottledwater
 tmp
 .idea/
+cmake_build/
