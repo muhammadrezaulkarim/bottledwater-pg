@@ -12,8 +12,8 @@
 
 FROM postgres:9.5
 
-ENV RDKAFKA_VERSION=0.9.1 \
-    RDKAFKA_SHASUM="b9d0dd1de53d9f566312c4dd148a4548b4e9a6c2  /root/librdkafka-0.9.1.tar.gz" \
+ENV RDKAFKA_VERSION=v0.9.2 \
+    RDKAFKA_SHASUM="b9d0dd1de53d9f566312c4dd148a4548b4e9a6c2  /root/librdkafka-${RDKAFKA_VERSION}.tar.gz" \
     AVRO_C_VERSION=1.8.0 \
     AVRO_C_SHASUM="af7757633ccf067b1f140c58161e2cdc2f2f003d  /root/avro-c-1.8.0.tar.gz"
 
