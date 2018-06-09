@@ -17,6 +17,15 @@ ENV RDKAFKA_VERSION=0.9.1 \
     AVRO_C_VERSION=1.8.0 \
     AVRO_C_SHASUM="af7757633ccf067b1f140c58161e2cdc2f2f003d  /root/avro-c-1.8.0.tar.gz"
 
+#Install python
+RUN apk add --no-cache python3 && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    rm -r /root/.cache
+    
 RUN apt-get update && \
     # --force-yes is needed because we may need to downgrade libpq5 to $PG_MAJOR
     # (set by the postgres:9.5 Docker image).  Confusingly the postgres:x.y
