@@ -67,3 +67,13 @@ RUN cd /root/bottledwater && \
     tar czf bottledwater-ext.tar.gz usr/lib/postgresql/${PG_MAJOR}/lib/bottledwater.so usr/share/postgresql/${PG_MAJOR}/extension/bottledwater* && \
     cp /root/bottledwater/kafka/bottledwater /root/bottledwater/client/bwtest /usr/local/bin && \
     tar czf bottledwater-bin.tar.gz usr/local/bin/bottledwater usr/local/bin/bwtest
+
+#run the bottledwater-docker-wrapper.sh
+COPY bottledwater-docker-wrapper.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/bottledwater-docker-wrapper.sh
+
+RUN cp /usr/local/lib/librdkafka.so.* /usr/lib/x86_64-linux-gnu && \
+    cp /usr/local/lib/libavro.so.* /usr/lib/x86_64-linux-gnu
+
+ENTRYPOINT ["/usr/local/bin/bottledwater-docker-wrapper.sh"]
+CMD ["--output-format=json", "--allow-unkeyed"]
