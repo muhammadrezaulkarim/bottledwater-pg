@@ -75,5 +75,5 @@ RUN chmod +x /usr/local/bin/bottledwater-docker-wrapper.sh
 RUN cp /usr/local/lib/librdkafka.so.* /usr/lib/x86_64-linux-gnu && \
     cp /usr/local/lib/libavro.so.* /usr/lib/x86_64-linux-gnu
 
-ENTRYPOINT ["/usr/local/bin/bottledwater-docker-wrapper.sh"]
-CMD ["--output-format=json", "--allow-unkeyed"]
+#ENTRYPOINT ["/usr/local/bin/bottledwater-docker-wrapper.sh"]
+#CMD ["--output-format=json", "--allow-unkeyed"]
