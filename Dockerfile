@@ -79,7 +79,7 @@ RUN cp /usr/local/lib/librdkafka.so.* /usr/lib/x86_64-linux-gnu && \
 
 # Configurations for POSTGRES-BOTTLEDWATER EXTENSION
 #Entry point for POSTGRES database (extension is created here)
-COPY postgres-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/postgres-entrypoint.sh
 COPY replication-config.sh /docker-entrypoint-initdb.d/replication-config.sh
+COPY postgres-entrypoint.sh /docker-entrypoint-initdb.d/postgres-entrypoint.sh
 
