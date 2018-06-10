@@ -35,7 +35,8 @@ RUN apt-get update && \
         cmake \
         curl \
         libcurl4-openssl-dev \
-        lib64z1-dev \
+        zlib1g \
+        zlib1g-dev \ 
         libjansson-dev \
         libpq5=${PG_MAJOR}\* \
         libpq-dev=${PG_MAJOR}\* \
