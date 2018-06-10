@@ -77,3 +77,5 @@ RUN cp /usr/local/lib/librdkafka.so.* /usr/lib/x86_64-linux-gnu && \
 
 #ENTRYPOINT ["/usr/local/bin/bottledwater-docker-wrapper.sh"]
 #CMD ["--output-format=json", "--allow-unkeyed"]
+#RUN cp /usr/local/lib/libavro.so.* /usr/lib/x86_64-linux-gnu/
+COPY replication-config.sh /docker-entrypoint-initdb.d/replication-config.sh
