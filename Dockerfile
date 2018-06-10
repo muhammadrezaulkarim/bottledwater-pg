@@ -17,24 +17,6 @@ ENV RDKAFKA_VERSION=0.9.1 \
     AVRO_C_VERSION=1.8.0 \
     AVRO_C_SHASUM="af7757633ccf067b1f140c58161e2cdc2f2f003d  /root/avro-c-1.8.0.tar.gz"
 
-# Install python
-# Apt update and upgrade
-RUN \
-  apt-get -qq update && \
-  apt-get -qq dist-upgrade -y;
-
-RUN \
-  apt-get -qq -y install gcc git-core build-essential libffi-dev libssl-dev \
-    libcurl4-openssl-dev libreadline-dev bzip2 sqlite3 python3 python3-dev \
-    python3-pip;
-
-# Clean all
-RUN \
-  apt-get -qq clean autoclean;
-
-RUN \
-  pip3 install pylint git-lint && \
-  pip3 install -U distribute;
 
 # Create Symbolic link to point to python 3
 RUN \
@@ -53,6 +35,7 @@ RUN apt-get update && \
         cmake \
         curl \
         libcurl4-openssl-dev \
+        lib64z1-dev \
         libjansson-dev \
         libpq5=${PG_MAJOR}\* \
         libpq-dev=${PG_MAJOR}\* \
