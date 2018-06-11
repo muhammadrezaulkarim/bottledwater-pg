@@ -12,6 +12,10 @@
 
 FROM postgres:9.5
 
+ENV POSTGRES_USER postgres
+ENV POSTGRES_PASSWORD postgres
+ENV POSTGRES_DB postgres
+
 ENV RDKAFKA_VERSION=0.9.1 \
     RDKAFKA_SHASUM="b9d0dd1de53d9f566312c4dd148a4548b4e9a6c2  /root/librdkafka-0.9.1.tar.gz" \
     AVRO_C_VERSION=1.8.0 \
