@@ -14,95 +14,194 @@
 #
 #   docker run --rm debian:latest ip route | awk '/^default via / { print $3 }'
 
-zookeeper:
-  image: confluent/zookeeper:3.4.6-cp1
-  hostname: zookeeper
-  ports:
-    - '2181:2181'
-kafka:
-  image: confluent/kafka:0.9.0.0-cp1
-  hostname: kafka
-  links:
-    - zookeeper
-  environment:
-    KAFKA_LOG_CLEANUP_POLICY:
-    KAFKA_ADVERTISED_HOST_NAME:
-    KAFKA_AUTO_CREATE_TOPICS_ENABLE:
-  ports:
-    - '9092:9092'
-schema-registry:
-  image: confluent/schema-registry:2.0.1
-  hostname: schema-registry
-  links:
-    - zookeeper
-    - kafka
-  ports:
-    - '48081:8081'
-  environment:
-    SCHEMA_REGISTRY_AVRO_COMPATIBILITY_LEVEL: none
-postgres-94:
-  build: ./tmp
-  dockerfile: Dockerfile.postgres94
-  hostname: postgres
-  ports:
-    - '54094:5432'
-postgres:
-  build: ./tmp
-  dockerfile: Dockerfile.postgres
-  hostname: postgres
-  ports:
-    - '54095:5432'
-bottledwater:
-  build: ./tmp
-  dockerfile: Dockerfile.client
-  hostname: bottledwater
-  entrypoint:
-    - /usr/local/bin/bottledwater-docker-wrapper.sh
-    - --topic-config=message.timeout.ms=2000
-  environment:
-    BOTTLED_WATER_ALLOW_UNKEYED: 'true'
-    BOTTLED_WATER_ON_ERROR:
-    BOTTLED_WATER_SKIP_SNAPSHOT:
-    BOTTLED_WATER_TOPIC_PREFIX:
-    VALGRIND_ENABLED:
-    VALGRIND_OPTS:
-bottledwater-json:
-  extends: {service: bottledwater}
-  links:
-    - postgres
-    - postgres-94
-    - kafka
-  environment:
-    BOTTLED_WATER_OUTPUT_FORMAT: json
-bottledwater-avro:
-  extends: {service: bottledwater}
-  links:
-    - postgres
-    - postgres-94
-    - kafka
-    - schema-registry
-  environment:
-    BOTTLED_WATER_OUTPUT_FORMAT: avro
-psql:
-  image: postgres:9.5
-  links:
-    - postgres
-  entrypoint: ['psql', '-h', 'postgres', '-U', 'postgres']
-kafka-console-consumer:
-  image: confluent/tools:0.9.0.0-cp1
-  links:
-    - zookeeper
-    - kafka
-  entrypoint: ['kafka-console-consumer', '--zookeeper', 'zookeeper:2181']
-kafka-avro-console-consumer:
-  image: confluent/tools:0.9.0.0-cp1
-  links:
-    - zookeeper
-    - kafka
-    - schema-registry
-  entrypoint: ['kafka-avro-console-consumer', '--zookeeper', 'zookeeper:2181', '--property', 'schema.registry.url=http://schema-registry:8081']
-kafka-tools:
-  image: confluent/tools:0.9.0.0-cp1
-  links:
-    - zookeeper
-    - kafka
+version: '3.0'
+
+services:
+  gateway:
+    image: functions/gateway:0.6.15
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      dnsrr: 'true'
+    deploy:
+      placement:
+        constraints:
+          - 'node.role == manager'
+          - 'node.platform.os == linux'
+    ports:
+      - 8080:8080
+    networks:
+      - functions
+
+  ftrigger-kafka:
+    image: mrkcse/ftrigger:latest
+    command: kafka-trigger
+    networks:
+      - functions
+      - streaming
+    deploy:
+      placement:
+        constraints:
+          - 'node.role == manager'
+          - 'node.platform.os == linux'
+
+  echoit:
+    image: functions/alpine:health
+    labels:
+      function: "true"
+    environment:
+      fprocess: "cat"
+      no_proxy: "gateway"
+      https_proxy: $https_proxy
+    deploy:
+      placement:
+        constraints:
+          - 'node.platform.os == linux'
+      labels:
+        ftrigger.kafka: 'true'
+        ftrigger.kafka.topic: 'echo'
+    networks:
+      - functions
+
+  prometheus:
+    image: functions/prometheus:latest
+    command: "-config.file=/etc/prometheus/prometheus.yml -storage.local.path=/prometheus -storage.local.memory-chunks=10000 --alertmanager.url=http://alertmanager:9093"
+    ports:
+      - 9090:9090
+    environment:
+      no_proxy: "gateway"
+    networks:
+      - functions
+    deploy:
+      placement:
+        constraints:
+          - 'node.role == manager'
+          - 'node.platform.os == linux'
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:4.0.0
+    hostname: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+    networks:
+      - streaming
+    deploy:
+       placement:
+         constraints:
+           - 'node.role == manager'
+           - 'node.platform.os == linux'
+
+  kafka:
+    image: confluentinc/cp-kafka:4.0.0
+    hostname: kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_RESERVED_BROKER_MAX_ID=999999999
+      - KAFKA_LOG_CLEANUP_POLICY=compact
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+    networks:
+      - streaming
+    deploy:
+       placement:
+         constraints:
+           - 'node.role == manager'
+           - 'node.platform.os == linux'
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:4.0.0
+    hostname: kafka-rest
+    environment:
+      - ACCESS_CONTROL_ALLOW_ORIGIN_DEFAULT="*"
+      - KAFKA_REST_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_REST_HOST_NAME=kafka-rest
+      - KAFKA_REST_LISTENERS=http://kafka-rest:8082
+      - KAFKA_REST_BOOTSTRAP_SERVERS=PLAINTEXT://kafka:9092
+    ports:
+      - 8082:8082
+    networks:
+      - streaming
+    deploy:
+       placement:
+         constraints:
+          - 'node.role == manager'
+          - 'node.platform.os == linux'
+  
+  schema-registry:
+    image: confluentinc/cp-schema-registry:4.0.0
+    hostname: schema-registry
+    environment:
+      - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+      - SCHEMA_REGISTRY_LISTENERS=http://schema-registry:8081
+      - SCHEMA_REGISTRY_AVRO_COMPATIBILITY_LEVEL=none
+    ports:
+      - '8081:8081'
+    networks:
+      - streaming
+    deploy:
+       placement:
+         constraints:
+           - 'node.role == manager'
+           - 'node.platform.os == linux'
+
+  kafka-topics-ui:
+    image: landoop/kafka-topics-ui:0.9.2
+    environment:
+      - KAFKA_REST_PROXY_URL=http://kafka-rest:8082
+      - PROXY=true
+    ports:
+      - 8000:8000
+    networks:
+      - streaming
+    deploy:
+       placement:
+         constraints:
+           - 'node.role == manager'
+           - 'node.platform.os == linux'
+    
+  bottledwater:
+    image: mrkcse/bottledwater-pg:latest
+    environment:
+      - BOTTLED_WATER_ON_ERROR=exit
+      - BOTTLED_WATER_SKIP_SNAPSHOT=false
+      - BOTTLED_WATER_TOPIC_PREFIX=mrkcse
+      - BOTTLED_WATER_OUTPUT_FORMAT=avro
+      - BOTTLED_WATER_BROKER=kafka:9092
+      - BOTTLED_WATER_POSTGRES=postgres://postgres:postgres@postgres:5432/postgres
+      - BOTTLED_WATER_SCHEMA_REGISTRY=http://schema-registry:8081
+      - BOTTLED_WATER_SLOT=mrkcseslot
+    networks:
+      - streaming
+    depends_on:
+      - kafka
+      - zookeeper
+      - postgres
+      - schema-registry
+    entrypoint: /usr/local/bin/bottledwater-docker-wrapper.sh
+
+    deploy:
+       replicas: 0
+       placement:
+         constraints:
+           - 'node.role == manager'
+           - 'node.platform.os == linux'
+  postgres:
+    image: mrkcse/bottledwater-pg:latest
+    hostname: postgres
+    ports:
+      - '5432:5432'
+
+    networks:
+      - streaming
+    deploy:
+       placement:
+         constraints:
+           - 'node.role == manager'
+           - 'node.platform.os == linux'
+networks:
+  functions:
+  streaming:
