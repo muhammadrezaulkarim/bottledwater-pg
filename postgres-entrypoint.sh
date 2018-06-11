@@ -1,5 +1,6 @@
 #!/bin/bash
 
+adduser postgres sudo
 sudo -u postgres psql -d postgres -U postgres
 create extension bottledwater;
 create table test (id serial primary key, value text);
