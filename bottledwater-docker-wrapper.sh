@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# wait until db is ready to accept connection
+while ! psql --host=postgres --username=postgres > /dev/null 2>&1; do
+    echo 'Waiting for connection with postgres...'
+    sleep 1;
+done;
+sleep 120;
+echo 'Connected to postgres...';
+    
 log() { echo "$0: $@" >&2; }
 
 declare -a bw_opts
