@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 
 # wait until db is ready to accept connection
-while ! psql --host=postgres --username=postgres > /dev/null 2>&1; do
-    echo 'Waiting for connection with postgres...'
-    sleep 1;
-done;
-sleep 120;
-echo 'Connected to postgres...';
+#while ! psql --host=postgres --username=postgres > /dev/null 2>&1; do
+    #echo 'Waiting for connection with postgres...'
+    #sleep 1;
+#done;
+
+# Waiting added for testing purpose. Will be eliminited later on
+for i in {1..50}
+do
+  echo 'Waiting for 5 secs...'
+  echo $i
+  sleep 5
+done
+echo 'Waiting finished...'
+echo 'Trying to connect to postgres db...';
     
 log() { echo "$0: $@" >&2; }
 
