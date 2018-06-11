@@ -41,6 +41,7 @@ RUN apt-get update && \
         libpq5=${PG_MAJOR}\* \
         libpq-dev=${PG_MAJOR}\* \
         pkg-config \
+        sudo \
         postgresql-server-dev-${PG_MAJOR}=${PG_MAJOR}\*
 
 # Avro
