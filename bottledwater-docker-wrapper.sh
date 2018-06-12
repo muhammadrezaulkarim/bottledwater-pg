@@ -56,12 +56,12 @@ for var in "${!BOTTLED_WATER_@}"; do
 done
 
 # do we have a link to the schema-registry container?
-if getent hosts schema-registry >/dev/null; then
-  SCHEMA_REGISTRY_URL="http://schema-registry:8081"
+#if getent hosts schema-registry >/dev/null; then
+  #SCHEMA_REGISTRY_URL="http://schema-registry:8081"
 
-  log "Detected schema registry, setting --schema-registry=$SCHEMA_REGISTRY_URL"
-  bw_opts+=(--schema-registry="$SCHEMA_REGISTRY_URL")
-fi
+  #log "Detected schema registry, setting --schema-registry=$SCHEMA_REGISTRY_URL"
+  #bw_opts+=(--schema-registry="$SCHEMA_REGISTRY_URL")
+#fi
 
 BOTTLEDWATER=/usr/local/bin/bottledwater
 VALGRIND=/usr/bin/valgrind
