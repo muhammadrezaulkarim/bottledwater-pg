@@ -16,7 +16,7 @@
 #echo 'Waiting finished...'
 
 # Waiting until postgres is up
-for i in {1..80}
+for i in {1..50}
 do
   echo 'Waiting for 5 secs...'
   echo $i
