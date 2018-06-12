@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
 
 # wait until postgres is ready to accept connection
-set -e
-host="postgres"
-shift
-cmd="$@"
+#set -e
+#host="postgres"
+#shift
+#cmd="$@"
 
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$host" -U "postgres" -c '\q'; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 1
-done
-
-echo "Postgres is up...Waiting a bit..."
-sleep 60
-echo 'Waiting finished...'
-
-# Waiting added for testing purpose. Will be eliminited later on
-#for i in {1..50}
-#do
-  #echo 'Waiting for 5 secs...'
-  #echo $i
-  #sleep 5
+#until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$host" -U "postgres" -c '\q'; do
+  #>&2 echo "Postgres is unavailable - sleeping"
+  #sleep 1
 #done
+
+#echo "Postgres is up...Waiting a bit..."
+#sleep 60
 #echo 'Waiting finished...'
-#echo 'Trying to connect to postgres db...';
+
+# Waiting until postgres is up
+for i in {1..50}
+do
+  echo 'Waiting for 5 secs...'
+  echo $i
+  sleep 5
+done
+echo 'Waiting finished...'
+echo 'Trying to connect to postgres db...';
     
 log() { echo "$0: $@" >&2; }
 
