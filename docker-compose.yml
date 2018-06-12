@@ -58,8 +58,9 @@ services:
         constraints:
           - 'node.platform.os == linux'
       labels:
-        ftrigger.kafka: 'true'
-        ftrigger.kafka.topic: 'echo'
+        ftrigger.kafka: "true"
+        ftrigger.kafka.topic: "mrkcse.test"
+        ftrigger.kafka.data: "key-value"
     networks:
       - functions
 
@@ -169,10 +170,9 @@ services:
       - BOTTLED_WATER_ON_ERROR=exit
       - BOTTLED_WATER_SKIP_SNAPSHOT=false
       - BOTTLED_WATER_TOPIC_PREFIX=mrkcse
-      - BOTTLED_WATER_OUTPUT_FORMAT=avro
+      - BOTTLED_WATER_OUTPUT_FORMAT=json
       - BOTTLED_WATER_BROKER=kafka:9092
       - BOTTLED_WATER_POSTGRES=postgres://postgres:postgres@postgres:5432/postgres
-      - BOTTLED_WATER_SCHEMA_REGISTRY=http://schema-registry:8081
       - BOTTLED_WATER_SLOT=mrkcseslot
     networks:
       - streaming
@@ -180,7 +180,6 @@ services:
       - kafka
       - zookeeper
       - postgres
-      - schema-registry
     entrypoint: /usr/local/bin/bottledwater-docker-wrapper.sh
 
     deploy:
