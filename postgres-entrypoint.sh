@@ -13,14 +13,17 @@ now="$(date)"
 echo "Record insertion start date and time: $now"
 
 # during start up insert 13000 records in a table for simulation purpose 
-for i in {1..13000}
+mycommand="insert into test (value) values('hello world');"
+for i in {1..1000}
 do
-  temp1=HelloWorld 
-  msg='${temp1} ${i}'
-  echo $msg
-  mycommand="insert into test (value) values('$msg');"
-  exec "psql -d postgres -U postgres -c" "$mycommand"
+  #temp1=HelloWorld 
+  #msg='${temp1} ${i}'
+  #echo $msg
+  echo $i
+  mycommand+="insert into test (value) values('hello world');"
 done
+
+psql -d postgres -U postgres -c "$mycommand"
 
 now="$(date)"
 echo "Record insertion end date and time: $now"
