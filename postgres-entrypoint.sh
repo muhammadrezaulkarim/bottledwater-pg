@@ -19,7 +19,7 @@ do
   msg='${temp1} ${i}'
  
   echo $msg
-  psql -d postgres -U postgres -c "insert into test (value) values({$msg})";
+  psql -d postgres -U postgres -c "insert into test (value) values({$msg});"
 done
 
 now="$(date)"
