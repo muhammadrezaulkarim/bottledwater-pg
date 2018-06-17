@@ -26,9 +26,8 @@ do
   done
   
   echo $mycommand
+  psql -d postgres -U postgres -c "$mycommand"
 done
-
-psql -d postgres -U postgres -c "$mycommand"
 
 now="$(date)"
 echo "Record insertion end date and time: $now"
