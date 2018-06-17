@@ -6,5 +6,19 @@
 
 psql -d postgres -U postgres -c "create extension bottledwater;"
 psql -d postgres -U postgres -c "create table test (id serial primary key, value text);"
-psql -d postgres -U postgres -c "insert into test (value) values('hello world!');"
+#psql -d postgres -U postgres -c "insert into test (value) values('hello world!');"
 
+# Waiting until postgres is up
+now="$(date)"
+echo "Record insertion start date and time: $now"
+
+# during start up insert 13000 records in a table for simulation purpose 
+for i in {1..13000}
+do
+  msg = "hello world!" +  $i
+  echo $msg
+  psql -d postgres -U postgres -c "insert into test (value) values($msg)";
+done
+
+now="$(date)"
+echo "Record insertion end date and time: $now"
