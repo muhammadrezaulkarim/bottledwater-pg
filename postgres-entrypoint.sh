@@ -8,20 +8,25 @@ psql -d postgres -U postgres -c "create extension bottledwater;"
 psql -d postgres -U postgres -c "create table test (id serial primary key, value text);"
 #psql -d postgres -U postgres -c "insert into test (value) values('hello world!');"
 
-# Waiting until postgres is up
 now="$(date)"
 echo "Record insertion start date and time: $now"
 
-# during start up insert 5000 records in a table for simulation purpose 
-mycommand="insert into test (value) values('hello world 1');"
-for i in {2..5000}
-do
-  msg="Hello World $i"
-  echo $msg
-  mycommand+="insert into test (value) values('$msg');"
-done
+# during start up insert 10000 records in a table for simulation purpose. 1000 in each batch
 
-echo $mycommand
+for batchinsert in {1..10}
+do
+  echo "PROCESSING BATCH $batchinsert"
+  mycommand="insert into test (value) values('hello world 1');"
+  
+  for i in {2..1000}
+  do
+    msg="hello world $i"
+    echo $msg
+    mycommand+="insert into test (value) values('$msg');"
+  done
+  
+  echo $mycommand
+done
 
 psql -d postgres -U postgres -c "$mycommand"
 
