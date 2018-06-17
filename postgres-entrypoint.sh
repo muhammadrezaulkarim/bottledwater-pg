@@ -12,16 +12,16 @@ psql -d postgres -U postgres -c "create table test (id serial primary key, value
 now="$(date)"
 echo "Record insertion start date and time: $now"
 
-# during start up insert 13000 records in a table for simulation purpose 
-mycommand="insert into test (value) values('hello world');"
-for i in {1..1000}
+# during start up insert 5000 records in a table for simulation purpose 
+mycommand="insert into test (value) values('hello world 1');"
+for i in {2..5000}
 do
-  #temp1=HelloWorld 
-  #msg='${temp1} ${i}'
-  #echo $msg
-  echo $i
-  mycommand+="insert into test (value) values('hello world');"
+  msg="Hello World $i"
+  echo $msg
+  mycommand+="insert into test (value) values('$msg');"
 done
+
+echo $mycommand
 
 psql -d postgres -U postgres -c "$mycommand"
 
