@@ -64,6 +64,25 @@ services:
     networks:
       - functions
 
+  sleepfunction:
+    image: mrkcse/myopenfasssimulator:latest
+    labels:
+      function: "true"
+    environment:
+      fprocess: "python handler.py"
+      no_proxy: "gateway"
+      https_proxy: $https_proxy
+    deploy:
+      placement:
+        constraints:
+          - 'node.platform.os == linux'
+      labels:
+        ftrigger.kafka: "true"
+        ftrigger.kafka.topic: "mrkcse.test"
+        ftrigger.kafka.data: "key-value"
+    networks:
+      - functions
+
   prometheus:
     image: functions/prometheus:latest
     command: "-config.file=/etc/prometheus/prometheus.yml -storage.local.path=/prometheus -storage.local.memory-chunks=10000 --alertmanager.url=http://alertmanager:9093"
