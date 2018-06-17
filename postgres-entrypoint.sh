@@ -15,11 +15,11 @@ echo "Record insertion start date and time: $now"
 # during start up insert 13000 records in a table for simulation purpose 
 for i in {1..13000}
 do
-  temp1=hello world
+  temp1=HelloWorld 
   msg='${temp1} ${i}'
- 
   echo $msg
-  psql -d postgres -U postgres -c "insert into test (value) values('$msg');"
+  mycommand="insert into test (value) values('$msg');"
+  exec "psql -d postgres -U postgres -c" "$mycommand"
 done
 
 now="$(date)"
