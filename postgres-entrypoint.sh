@@ -11,16 +11,18 @@ psql -d postgres -U postgres -c "create table test (id serial primary key, value
 now="$(date)"
 echo "Record insertion start date and time: $now"
 
-# during start up insert 10000 records in a table for simulation purpose. 1000 in each batch
+# during start up insert 25000 records in a table for simulation purpose. 1000 in each batch
 
-for batchinsert in {1..1}
+for batchinsert in {1..25}
 do
   echo "PROCESSING BATCH $batchinsert"
-  mycommand="insert into test (value) values('hello world 1');"
+  mycommand="insert into test (value) values('hello world for new batch');"
   
-  for i in {2..25000}
+ 
+  for i in {2..1000}
   do
-    msg="hello world $i"
+    count=($batchinsert-1)*1000 + $i
+    msg="hello world $count"
     echo $msg
     mycommand+="insert into test (value) values('$msg');"
   done
