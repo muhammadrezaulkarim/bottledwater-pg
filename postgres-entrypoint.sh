@@ -13,12 +13,12 @@ echo "Record insertion start date and time: $now"
 
 # during start up insert 10000 records in a table for simulation purpose. 1000 in each batch
 
-for batchinsert in {1..10}
+for batchinsert in {1..1}
 do
   echo "PROCESSING BATCH $batchinsert"
   mycommand="insert into test (value) values('hello world 1');"
   
-  for i in {2..1000}
+  for i in {2..25000}
   do
     msg="hello world $i"
     echo $msg
