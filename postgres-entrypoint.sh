@@ -21,7 +21,9 @@ do
  
   for i in {2..1000}
   do
-    count=($batchinsert-1)*1000 + $i
+    temp1=$(($batchinsert-1))
+    temp2=$(($temp1*1000))
+    count=$(($temp2+$i))
     msg="hello world $count"
     echo $msg
     mycommand+="insert into test (value) values('$msg');"
