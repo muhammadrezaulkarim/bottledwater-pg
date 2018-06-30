@@ -20,7 +20,7 @@ for i in {1..50}
 do
   echo 'Waiting for 8 secs...'
   echo $i
-  sleep 8
+  sleep 5
 done
 echo 'Waiting finished...'
 echo 'Trying to connect to postgres db...';
