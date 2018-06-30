@@ -6,9 +6,10 @@ DECLARE counter INTEGER;
 BEGIN
    counter := 0;
   
-   WHILE counter <= 20 LOOP
+   WHILE counter <= 50 LOOP
      update test set value='Modified hello world:' || counter where id=my_id;
 	 counter := counter + 1 ; 
+	 perform pg_sleep(0.5);
    END LOOP ; 
 		
    passed := TRUE;
@@ -17,5 +18,6 @@ BEGIN
 END;
 $passed$ LANGUAGE plpgsql;
 
-COMMIT;
+START TRANSACTION;
 select update_sample_data(5);
+COMMIT;
