@@ -11,7 +11,9 @@ psql -d postgres -U postgres -c "create table test (id serial primary key, value
 now="$(date)"
 echo "Record insertion start date and time: $now"
 
-# during start up insert 25000 records in a table for simulation purpose. 1000 in each batch
+# during start up insert 25000 records in a table named 'test' for simulation purpose. 1000 rows in each batch
+# 'test' table has two columns: 'id' and 'value' where id uniquely identifies an entity (primary key)
+# id automatically incremented at the time of each insertion
 
 for batchinsert in {1..25}
 do
@@ -31,6 +33,20 @@ do
   
   echo $mycommand
   psql -d postgres -U postgres -c "$mycommand"
+done
+
+# sleep for 60 seconds and then perform update operation on a single entity
+sleep 60
+
+# Now update the same entity 100 times and see which specific consumer process it and in which order
+for count in {1..100}
+do
+   msg="Modified hello world $count"
+   mycommand="update test set value='$msg' where id=5;"
+   echo $mycommand
+   psql -d postgres -U postgres -c "$mycommand"
+   # sleep for 20 seconds before you update the same entity again
+   sleep 20
 done
 
 now="$(date)"
