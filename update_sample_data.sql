@@ -4,17 +4,16 @@ DECLARE passed BOOLEAN;
 DECLARE counter INTEGER;
 
 BEGIN
-     counter := 0;
-     
-		 WHILE counter <= 20 LOOP
-			 update test set value='Modified hello world:' || counter where id=my_id;
-			 counter := counter + 1 ; 
-		 END LOOP ; 
+   counter := 0;
+  
+   WHILE counter <= 20 LOOP
+     update test set value='Modified hello world:' || counter where id=my_id;
+	 counter := counter + 1 ; 
+   END LOOP ; 
 		
-        
-		passed := TRUE;
-        
-		RETURN passed;
+   passed := TRUE;
+   RETURN passed;
+   
 END;
 $passed$ LANGUAGE plpgsql;
 
