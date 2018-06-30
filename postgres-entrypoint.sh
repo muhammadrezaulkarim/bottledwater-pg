@@ -36,17 +36,17 @@ do
 done
 
 # sleep for 60 seconds and then perform update operation on a single entity
-sleep 60
+sleep 30
 
-# Now update the same entity 100 times and see which specific consumer process it and in which order
-for count in {1..100}
+# Now update the same entity 20 times and see which specific consumer process it and in which order
+for count in {1..20}
 do
    msg="Modified hello world $count"
    mycommand="update test set value='$msg' where id=5;"
    echo $mycommand
    psql -d postgres -U postgres -c "$mycommand"
    # sleep for 20 seconds before you update the same entity again
-   sleep 20
+   sleep 3
 done
 
 now="$(date)"
