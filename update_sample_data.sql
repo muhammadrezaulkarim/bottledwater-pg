@@ -6,10 +6,10 @@ DECLARE counter INTEGER;
 BEGIN
    counter := 0;
   
-   WHILE counter <= 50 LOOP
+   WHILE counter <= 1000 LOOP
      update test set value='Modified hello world:' || counter where id=my_id;
 	 counter := counter + 1 ; 
-	 perform pg_sleep(0.5);
+	 perform pg_sleep(0.01);
    END LOOP ; 
 		
    passed := TRUE;
