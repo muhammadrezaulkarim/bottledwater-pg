@@ -30,7 +30,7 @@ log() { echo "$0: $@" >&2; }
 declare -a bw_opts
 
 POSTGRES_CONNECTION_STRING="host=postgres port=5432 dbname=postgres user=postgres"
-KAFKA_BROKER="kafka:9092"
+KAFKA_BROKER="kafka-service:9092"
 bw_opts+=(--postgres="$POSTGRES_CONNECTION_STRING" --broker="$KAFKA_BROKER")
 
 for var in "${!BOTTLED_WATER_@}"; do
