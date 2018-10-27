@@ -6,7 +6,10 @@
 
 psql -d postgres -U postgres -c "create extension bottledwater;"
 psql -d postgres -U postgres -c "create table test (id serial primary key, value text);"
-#psql -d postgres -U postgres -c "insert into test (value) values('hello world!');"
+psql -d postgres -U postgres -c "create table echo (id serial primary key, value text);"
+psql -d postgres -U postgres -c "create table sleep (id serial primary key, value text);"
+psql -d postgres -U postgres -c "create table play (id serial primary key, value text);"
+
 
 now="$(date)"
 echo "Record insertion start date and time: $now"
@@ -15,10 +18,11 @@ echo "Record insertion start date and time: $now"
 # 'test' table has two columns: 'id' and 'value' where id uniquely identifies an entity (primary key)
 # id automatically incremented at the time of each insertion
 
+# Insert in the test table
 for batchinsert in {1..25}
 do
   echo "PROCESSING BATCH $batchinsert"
-  mycommand="insert into test (value) values('hello world for new batch');"
+  mycommand="insert into test (value) values('Test hello world for new batch');"
   
  
   for i in {2..1000}
@@ -26,7 +30,7 @@ do
     temp1=$(($batchinsert-1))
     temp2=$(($temp1*1000))
     count=$(($temp2+$i))
-    msg="hello world $count"
+    msg="Test hello world $count"
     echo $msg
     mycommand+="insert into test (value) values('$msg');"
   done
@@ -34,6 +38,74 @@ do
   echo $mycommand
   psql -d postgres -U postgres -c "$mycommand"
 done
+
+# Insert in the echo table
+for batchinsert in {1..25}
+do
+  echo "PROCESSING BATCH $batchinsert"
+  mycommand="insert into echo (value) values('Echo hello world for new batch');"
+  
+ 
+  for i in {2..1000}
+  do
+    temp1=$(($batchinsert-1))
+    temp2=$(($temp1*1000))
+    count=$(($temp2+$i))
+    msg="Echo hello world $count"
+    echo $msg
+    mycommand+="insert into echo (value) values('$msg');"
+  done
+  
+  echo $mycommand
+  psql -d postgres -U postgres -c "$mycommand"
+done
+
+
+# Insert records in the sleep table
+for batchinsert in {1..25}
+do
+  echo "PROCESSING BATCH $batchinsert"
+  mycommand="insert into sleep (value) values('Sleep hello world for new batch');"
+  
+ 
+  for i in {2..1000}
+  do
+    temp1=$(($batchinsert-1))
+    temp2=$(($temp1*1000))
+    count=$(($temp2+$i))
+    msg="Sleep hello world $count"
+    echo $msg
+    mycommand+="insert into sleep (value) values('$msg');"
+  done
+  
+  echo $mycommand
+  psql -d postgres -U postgres -c "$mycommand"
+done
+
+
+# Insert records in the play table
+for batchinsert in {1..25}
+do
+  echo "PROCESSING BATCH $batchinsert"
+  mycommand="insert into play (value) values('Play hello world for new batch');"
+  
+ 
+  for i in {2..1000}
+  do
+    temp1=$(($batchinsert-1))
+    temp2=$(($temp1*1000))
+    count=$(($temp2+$i))
+    msg="Play hello world $count"
+    echo $msg
+    mycommand+="insert into play (value) values('$msg');"
+  done
+  
+  echo $mycommand
+  psql -d postgres -U postgres -c "$mycommand"
+done
+
+
+
 
 # sleep for 60 seconds and then perform update operation on a single entity
 #sleep 30
